@@ -5,11 +5,12 @@ import Image from "next/image";
 const ProfileHeaderContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
+  margin-bottom: 44px;
 
   @media (max-width: 480px) {
     display: grid;
     grid-template-columns: 0.85fr 2fr;
-    }
+  }
 `;
 
 const ProfileImage = styled(Image)`

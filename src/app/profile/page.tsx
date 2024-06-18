@@ -1,10 +1,11 @@
-"use client"
+"use client";
 // importing liblaries
 import styled from "styled-components";
 
 // importing containers
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
+import ProfilePhotosGrid from "../components/PhotoGrid/ProfilePhotosGrid";
 
 // import all icons for navbar
 import CompassIcon from "../../../public/icons/compass.svg";
@@ -15,14 +16,14 @@ import MagnifyingGlassIcon from "../../../public/icons/magnifyingglass.svg";
 import MessageIcon from "../../../public/icons/message.svg";
 
 const ProfileContainer = styled.div`
-    padding-left: 73px;
-    max-width: 935px;
-    margin: 30px auto;
+  padding-left: 73px;
+  max-width: 935px;
+  margin: 30px auto;
 
-    @media (max-width: 480px) {
-        padding-left: 40px;
-    }
-`
+  @media (max-width: 480px) {
+    padding-left: 40px;
+  }
+`;
 
 export interface Icon {
   path: string;
@@ -84,6 +85,7 @@ export default function Profile() {
         {/* header  */}
         <ProfileHeader />
         {/* photo grid */}
+        <ProfilePhotosGrid />
         {/* video stories */}
       </ProfileContainer>
     </>
