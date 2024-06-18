@@ -5,6 +5,7 @@ import Image from "next/image";
 import styled from "styled-components";
 
 const Navigation = styled.aside`
+  background-color: black;
   display: grid;
   grid-template-rows: repeat(6, min-content);
   grid-gap: 10px;

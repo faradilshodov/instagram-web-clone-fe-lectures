@@ -1,16 +1,17 @@
 "use client";
 
 // importing libraries
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import styled from "styled-components";
 
 import Image from "next/image";
+
+import ProfilePhotosGridModal from "./ProfilePhotosGridModal";
 
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 5px;
-
 `;
 
 const PhotoItem = styled.div`
@@ -18,7 +19,7 @@ const PhotoItem = styled.div`
   padding-bottom: 100%;
 `;
 
-interface PostObject {
+export interface PostObject {
   post_id: number;
   user_id: number;
   media_url: string;
@@ -26,8 +27,61 @@ interface PostObject {
 }
 
 const apiLinkPosts: string = "https://jan24-jilhslxp5q-uc.a.run.app/api/posts";
+
+// Create a type called CommmentsObj
+export interface CommmentsObj {
+  id: number;
+  comment: string;
+}
+
+const commentsArray: CommmentsObj[] = [
+  {
+    id: 1,
+    comment: "This is so informative, thanks for sharing!",
+  },
+  {
+    id: 2,
+    comment: "Great job on this one!",
+  },
+  {
+    id: 3,
+    comment: "This didn't really make sense to me.",
+  },
+  {
+    id: 4,
+    comment: "This is exactly what I needed to hear today.",
+  },
+  {
+    id: 5,
+    comment: "What an interesting perspective!",
+  },
+  {
+    id: 6,
+    comment: "This didn't really make sense to me.",
+  },
+  {
+    id: 7,
+    comment: "This is exactly what I needed to hear today.",
+  },
+  {
+    id: 8,
+    comment: "Great job on this one!",
+  },
+  {
+    id: 9,
+    comment: "What an interesting perspective!",
+  },
+  {
+    id: 10,
+    comment: "This is exactly what I needed to hear today.",
+  },
+];
+
 export default function ProfilePhotosGrid() {
   const [posts, setPosts] = useState<PostObject[]>();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedPost, setSelectedPost] = useState<PostObject | null>(null);
+  const [comments, setComments] = useState<CommmentsObj[]>(commentsArray)
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -39,8 +93,6 @@ export default function ProfilePhotosGrid() {
         }
 
         const data = await response.json();
-        // console.log(data.posts);
-
         setPosts(data.posts);
       } catch (error: any) {
         console.log(error);
@@ -50,12 +102,23 @@ export default function ProfilePhotosGrid() {
     fetchPosts();
   });
 
+  const openModal = (post: PostObject) => {
+    setIsModalOpen(true);
+    setSelectedPost(post);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <GridContainer>
-        {/* photoItem div*/}
         {posts?.map((postObject: PostObject) => (
-          <PhotoItem key={postObject.post_id}>
+          <PhotoItem
+            key={postObject.post_id}
+            onClick={() => openModal(postObject)}
+          >
             <Image
               src={postObject.media_url}
               alt="Post Photo"
@@ -64,8 +127,14 @@ export default function ProfilePhotosGrid() {
             />
           </PhotoItem>
         ))}
-        {/* image */}
       </GridContainer>
+      {isModalOpen && (
+        <ProfilePhotosGridModal
+          closeModal={closeModal}
+          selectedPost={selectedPost}
+          dummyComments={comments}
+        />
+      )}
     </>
   );
 }
