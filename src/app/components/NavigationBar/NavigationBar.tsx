@@ -34,7 +34,7 @@ const Navigation = styled.aside`
   @media (max-width: 768px) {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: grid;
-    grid-template-columns: repeat(6, min-content);
+    grid-template-columns: repeat(7, min-content);
     grid-template-rows: 1fr;
     height: fit-content;
     bottom: 0px;
@@ -60,7 +60,10 @@ export default function NavigationBar({ items }: NavigationBarPropTypes) {
       <Navigation>
         {items.map((icon, index) => {
           return (
-            <button key={index}>
+            <button
+              key={index}
+              onClick={icon.onClick ? icon.onClick : () => {}}
+            >
               <Image
                 src={icon.path}
                 width={icon.width}

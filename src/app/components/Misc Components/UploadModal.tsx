@@ -73,7 +73,15 @@ const SubmitButton = styled.button`
   color: white;
 `;
 
-export default function UploadModal() {
+interface UploadModalProps {
+  toggleUploadModal: () => void;
+  isModalOpen: boolean;
+}
+
+export default function UploadModal({
+  toggleUploadModal,
+  isModalOpen,
+}: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState<string>("");
 
@@ -87,7 +95,7 @@ export default function UploadModal() {
     setText(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     // validate wether there is an actual file to upload
     if (!file) {
       alert("Please, select a video or photo from your file system");
@@ -109,49 +117,71 @@ export default function UploadModal() {
       alert(
         "You can only select photos for the photo feed or videos  for the stories grid"
       );
-      return
+      return;
     }
 
-    const formData: FormData = new FormData()
-    formData.append(formField, file)
-    formData.append(formField === "image" ? "caption" : "title", text)
+    const formData: FormData = new FormData();
+    formData.append(formField, file);
+    formData.append(formField === "image" ? "caption" : "title", text);
+
+    try {
+      const response: Response = await fetch(
+        `https:///jan24-jilhslxp5q-uc.a.run.app/api/${uploadEndpoint}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error uploading a file");
+      }
+
+      // hide the modal
+      toggleUploadModal();
+      // reload the respective component
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (
     <>
-      <ModalBackdrop>
-        <UploadModalContent>
-          <h1>Upload a video story or photo post</h1>
-          <hr />
+      {isModalOpen && (
+        <ModalBackdrop onClick={toggleUploadModal}>
+          <UploadModalContent onClick={(e) => e.stopPropagation()}>
+            <h1>Upload a video story or photo post</h1>
+            <hr />
 
-          <CustomFileInputContainer>
-            <input
-              type="file"
-              id="file-upload"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-            <SelectFileButton htmlFor="file-upload">
-              Select from your computer
-            </SelectFileButton>
+            <CustomFileInputContainer>
+              <input
+                type="file"
+                id="file-upload"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+              />
+              <SelectFileButton htmlFor="file-upload">
+                Select from your computer
+              </SelectFileButton>
 
-            <FileNameDisplay isFileChosen={file !== null}>
-              {file ? file.name : "No file chosen"}
-            </FileNameDisplay>
+              <FileNameDisplay isFileChosen={file !== null}>
+                {file ? file.name : "No file chosen"}
+              </FileNameDisplay>
 
-            <CustomTextInput
-              type="text"
-              placeholder="If photo - enter caption, if video - enter title."
-              onChange={handleTextChange}
-              value={text}
-            />
+              <CustomTextInput
+                type="text"
+                placeholder="If photo - enter caption, if video - enter title."
+                onChange={handleTextChange}
+                value={text}
+              />
 
-            <SubmitButton type="submit" onClick={handleSubmit}>
-              Submit
-            </SubmitButton>
-          </CustomFileInputContainer>
-        </UploadModalContent>
-      </ModalBackdrop>
+              <SubmitButton type="submit" onClick={handleSubmit}>
+                Submit
+              </SubmitButton>
+            </CustomFileInputContainer>
+          </UploadModalContent>
+        </ModalBackdrop>
+      )}
     </>
   );
 }

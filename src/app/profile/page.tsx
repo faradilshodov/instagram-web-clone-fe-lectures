@@ -1,6 +1,7 @@
 "use client";
 // importing liblaries
 import styled from "styled-components";
+import { useState } from "react";
 
 // importing containers
 import NavigationBar from "../components/NavigationBar/NavigationBar";
@@ -16,6 +17,7 @@ import HeartIcon from "../../../public/icons/heart.svg";
 import HouseIcon from "../../../public/icons/house.svg";
 import MagnifyingGlassIcon from "../../../public/icons/magnifyingglass.svg";
 import MessageIcon from "../../../public/icons/message.svg";
+import AddButtonIcon from "../../../public/icons/plus.app.svg";
 
 const ProfileContainer = styled.div`
   padding-left: 73px;
@@ -32,52 +34,64 @@ export interface Icon {
   altText: string;
   width: number;
   height: number;
+  onClick?: () => void;
 }
 
-const iconWidth: number = 25;
-const iconHeight: number = 25;
-
-const navbarConfigItems: Icon[] = [
-  {
-    path: HouseIcon,
-    altText: "Home",
-    width: iconWidth,
-    height: iconHeight,
-  },
-  {
-    path: MagnifyingGlassIcon,
-    altText: "Search",
-    width: iconWidth,
-    height: iconHeight,
-  },
-  {
-    path: CompassIcon,
-    altText: "Discover",
-    width: iconWidth,
-    height: iconHeight,
-  },
-  {
-    path: FilmIcon,
-    altText: "Reels",
-    width: iconWidth,
-    height: iconHeight,
-  },
-  {
-    path: MessageIcon,
-    altText: "Message",
-    width: iconWidth,
-    height: iconHeight,
-  },
-  {
-    path: HeartIcon,
-    altText: "Likes",
-    width: iconWidth,
-    height: iconHeight,
-  },
-];
-
 export default function Profile() {
-  // functionality for keeping track of when user tries to upload
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+
+  const toggleModal = () => {
+    setIsUploadModalOpen(!isUploadModalOpen);
+  };
+
+  const iconWidth: number = 25;
+  const iconHeight: number = 25;
+
+  const navbarConfigItems: Icon[] = [
+    {
+      path: HouseIcon,
+      altText: "Home",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: MagnifyingGlassIcon,
+      altText: "Search",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: CompassIcon,
+      altText: "Discover",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: FilmIcon,
+      altText: "Reels",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: MessageIcon,
+      altText: "Message",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: HeartIcon,
+      altText: "Likes",
+      width: iconWidth,
+      height: iconHeight,
+    },
+    {
+      path: AddButtonIcon,
+      altText: "Add",
+      width: iconWidth,
+      height: iconHeight,
+      onClick: toggleModal,
+    },
+  ];
 
   return (
     <>
@@ -85,11 +99,13 @@ export default function Profile() {
       <NavigationBar items={navbarConfigItems} />
 
       {/* upload modal */}
-      <UploadModal />
+      <UploadModal
+        toggleUploadModal={toggleModal}
+        isModalOpen={isUploadModalOpen}
+      />
 
       {/* profile container */}
       <ProfileContainer>
-
         {/* header  */}
         <ProfileHeader />
         {/* video stories */}
