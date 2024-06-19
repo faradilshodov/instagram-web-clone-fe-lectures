@@ -7,6 +7,7 @@ import NavigationBar from "../components/NavigationBar/NavigationBar";
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
 import ProfilePhotosGrid from "../components/PhotoGrid/ProfilePhotosGrid";
 import ProfileStoriesGrid from "../components/ProfileStories/ProfileStoriesGrid";
+import UploadModal from "../components/Misc Components/UploadModal";
 
 // import all icons for navbar
 import CompassIcon from "../../../public/icons/compass.svg";
@@ -76,13 +77,19 @@ const navbarConfigItems: Icon[] = [
 ];
 
 export default function Profile() {
+  // functionality for keeping track of when user tries to upload
+
   return (
     <>
       {/* navigation bar */}
       <NavigationBar items={navbarConfigItems} />
 
+      {/* upload modal */}
+      <UploadModal />
+
       {/* profile container */}
       <ProfileContainer>
+
         {/* header  */}
         <ProfileHeader />
         {/* video stories */}
