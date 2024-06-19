@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
+import ProfileStoriesModal from "./ProfileStoriesModal";
+
 const StoriesGrid = styled.div`
   display: grid;
   grid-auto-flow: column;
@@ -30,7 +32,7 @@ const StoryThumbnail = styled.div<StoryThumbnailPropTypes>`
   cursor: pointer;
 `;
 
-interface Story {
+export interface Story {
   story_id: number;
   user_id: number;
   video_url: string;
@@ -42,6 +44,8 @@ const apiLinkStories: string =
   "https://jan24-jilhslxp5q-uc.a.run.app/api/stories";
 export default function ProfileStoriesGrid() {
   const [stories, setStories] = useState<Story[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>();
+  const [currentStoryIndex, setCurrentStoryIndex] = useState<number>();
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -63,16 +67,41 @@ export default function ProfileStoriesGrid() {
     fetchStories();
   }, []);
 
+  const openModal = (story: Story) => {
+    setIsModalOpen(true);
+
+    const index = stories.findIndex((s) => s.story_id === story.story_id);
+
+    if (index !== -1) {
+      setCurrentStoryIndex(index);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <StoriesGrid>
         {stories.map((story) => (
           <>
-            <StoryThumbnail imageurl={story.thumbnail_url} />
+            <StoryThumbnail
+              imageurl={story.thumbnail_url}
+              onClick={() => openModal(story)}
+            />
             <p>{story.title}</p>
           </>
         ))}
       </StoriesGrid>
+      {isModalOpen && (
+        <ProfileStoriesModal
+          closeModal={closeModal}
+          stories={stories}
+          currentStoryIndex={currentStoryIndex}
+          setCurrentStoryIndex={setCurrentStoryIndex}
+        />
+      )}
     </>
   );
 }
