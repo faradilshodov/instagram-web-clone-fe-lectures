@@ -1,7 +1,7 @@
 "use client";
 // importing liblaries
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // importing containers
 import NavigationBar from "../components/NavigationBar/NavigationBar";
@@ -19,10 +19,30 @@ import MagnifyingGlassIcon from "../../../public/icons/magnifyingglass.svg";
 import MessageIcon from "../../../public/icons/message.svg";
 import AddButtonIcon from "../../../public/icons/plus.app.svg";
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: black;
+  font-size: 1.5em;
+  color: white;
+`;
+
+const AppContainer = styled.div<{ isLoaded: boolean }>`
+  display: ${({ isLoaded }) => (isLoaded ? "block" : "none")};
+  transition: opacity 0.5s ease-in-out;
+  opacity: ${({ isLoaded }) => (isLoaded ? 1 : 0)};
+`;
+
 const ProfileContainer = styled.div`
   padding-left: 73px;
   max-width: 935px;
   margin: 30px auto;
+
+  @media (max-width: 768px) {
+    padding: 50px;
+  }
 
   @media (max-width: 480px) {
     padding-left: 40px;
@@ -40,6 +60,17 @@ export interface Icon {
 export default function Profile() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
   const [triggerRender, setTriggerRender] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Simulate CSS loading delay
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // 1-second delay to mimic CSS load
+
+    // Cleanup function if the component is unmounted
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   const handleTriggerRender = () => {
     setTriggerRender(!triggerRender);
@@ -100,25 +131,31 @@ export default function Profile() {
 
   return (
     <>
-      {/* navigation bar */}
-      <NavigationBar items={navbarConfigItems} />
+      {isLoading ? (
+        <LoadingContainer>Loading...</LoadingContainer>
+      ) : (
+        <AppContainer isLoaded={!isLoading}>
+          {/* navigation bar */}
+          <NavigationBar items={navbarConfigItems} />
 
-      {/* upload modal */}
-      <UploadModal
-        toggleUploadModal={toggleModal}
-        isModalOpen={isUploadModalOpen}
-        onUploadSuccess={handleTriggerRender}
-      />
+          {/* upload modal */}
+          <UploadModal
+            toggleUploadModal={toggleModal}
+            isModalOpen={isUploadModalOpen}
+            onUploadSuccess={handleTriggerRender}
+          />
 
-      {/* profile container */}
-      <ProfileContainer>
-        {/* header  */}
-        <ProfileHeader />
-        {/* video stories */}
-        <ProfileStoriesGrid triggerRender={triggerRender}/>
-        {/* photo grid */}
-        <ProfilePhotosGrid />
-      </ProfileContainer>
+          {/* profile container */}
+          <ProfileContainer>
+            {/* header  */}
+            <ProfileHeader />
+            {/* video stories */}
+            <ProfileStoriesGrid triggerRender={triggerRender} />
+            {/* photo grid */}
+            <ProfilePhotosGrid />
+          </ProfileContainer>
+        </AppContainer>
+      )}
     </>
   );
 }

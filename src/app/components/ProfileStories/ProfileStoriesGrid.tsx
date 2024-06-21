@@ -22,6 +22,7 @@ interface StoryThumbnailPropTypes {
 }
 
 const StoryThumbnail = styled.div<StoryThumbnailPropTypes>`
+  position: relative;
   width: 77px;
   height: 77px;
   border-radius: 50%;
@@ -34,10 +35,10 @@ const StoryThumbnail = styled.div<StoryThumbnailPropTypes>`
 `;
 
 const StoryDeleteButton = styled.button`
-  position: relative;
+  position: absolute;
   z-index: 5;
-  left: 70px;
-  bottom: 18px;
+  left: 75px;
+  bottom: 70px;
   color: white;
   border-radius: 50%;
   width: 25px;
