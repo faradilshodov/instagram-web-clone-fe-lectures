@@ -76,11 +76,13 @@ const SubmitButton = styled.button`
 interface UploadModalProps {
   toggleUploadModal: () => void;
   isModalOpen: boolean;
+  onUploadSuccess: () => void;
 }
 
 export default function UploadModal({
   toggleUploadModal,
   isModalOpen,
+  onUploadSuccess,
 }: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState<string>("");
@@ -140,6 +142,7 @@ export default function UploadModal({
       // hide the modal
       toggleUploadModal();
       // reload the respective component
+      onUploadSuccess();
     } catch (error: any) {
       console.log(error);
     }

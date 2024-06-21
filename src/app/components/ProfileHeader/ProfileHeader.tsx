@@ -109,7 +109,7 @@ export default function ProfileHeader() {
           </BioText>
         </ProfileHeaderContainer>
       ) : (
-        <p>No Data</p>
+        <p>Loading...</p>
       )}
     </>
   );

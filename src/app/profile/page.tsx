@@ -39,6 +39,11 @@ export interface Icon {
 
 export default function Profile() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [triggerRender, setTriggerRender] = useState<boolean>(false);
+
+  const handleTriggerRender = () => {
+    setTriggerRender(!triggerRender);
+  };
 
   const toggleModal = () => {
     setIsUploadModalOpen(!isUploadModalOpen);
@@ -102,6 +107,7 @@ export default function Profile() {
       <UploadModal
         toggleUploadModal={toggleModal}
         isModalOpen={isUploadModalOpen}
+        onUploadSuccess={handleTriggerRender}
       />
 
       {/* profile container */}
@@ -109,7 +115,7 @@ export default function Profile() {
         {/* header  */}
         <ProfileHeader />
         {/* video stories */}
-        <ProfileStoriesGrid />
+        <ProfileStoriesGrid triggerRender={triggerRender}/>
         {/* photo grid */}
         <ProfilePhotosGrid />
       </ProfileContainer>

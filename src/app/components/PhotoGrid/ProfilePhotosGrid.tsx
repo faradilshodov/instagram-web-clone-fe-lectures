@@ -3,6 +3,7 @@
 // importing libraries
 import React, { useState, useEffect, use } from "react";
 import styled from "styled-components";
+import { useParams, usePathname } from "next/navigation";
 
 import Image from "next/image";
 
@@ -17,6 +18,24 @@ const GridContainer = styled.div`
 const PhotoItem = styled.div`
   position: relative;
   padding-bottom: 100%;
+`;
+
+const PostDeleteButton = styled.button`
+  position: absolute;
+  z-index: 5;
+  right: 5px;
+  top: 5px;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  border: 1px solid gray;
+
+  &:hover {
+    background-color: rgba(255, 0, 0, 0.7);
+  }
 `;
 
 export interface PostObject {
@@ -81,7 +100,7 @@ export default function ProfilePhotosGrid() {
   const [posts, setPosts] = useState<PostObject[]>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<PostObject | null>(null);
-  const [comments, setComments] = useState<CommmentsObj[]>(commentsArray)
+  const [comments, setComments] = useState<CommmentsObj[]>(commentsArray);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -100,7 +119,28 @@ export default function ProfilePhotosGrid() {
     };
 
     fetchPosts();
-  });
+  }, []);
+
+  const deletePost = async (postId: number) => {
+    try {
+      const response: Response = await fetch(
+        `https://jan24-jilhslxp5q-uc.a.run.app/api/posts/${postId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error deleting Posts");
+      }
+
+      setPosts((currentPosts) =>
+        currentPosts?.filter((post) => post.post_id !== postId)
+      );
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const openModal = (post: PostObject) => {
     setIsModalOpen(true);
@@ -111,6 +151,8 @@ export default function ProfilePhotosGrid() {
     setIsModalOpen(false);
   };
 
+  const pathname = usePathname();
+
   return (
     <>
       <GridContainer>
@@ -119,6 +161,17 @@ export default function ProfilePhotosGrid() {
             key={postObject.post_id}
             onClick={() => openModal(postObject)}
           >
+            {pathname === "/admin" && (
+              <PostDeleteButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deletePost(postObject.post_id);
+                }}
+              >
+                X
+              </PostDeleteButton>
+            )}
+
             <Image
               src={postObject.media_url}
               alt="Post Photo"

@@ -3,6 +3,8 @@
 import { Icon } from "../../profile/page";
 import Image from "next/image";
 import styled from "styled-components";
+import { usePathname } from "next/navigation";
+import path from "path";
 
 const Navigation = styled.aside`
   background-color: black;
@@ -55,10 +57,18 @@ interface NavigationBarPropTypes {
 }
 
 export default function NavigationBar({ items }: NavigationBarPropTypes) {
+  const pathname = usePathname();
+
   return (
     <>
       <Navigation>
         {items.map((icon, index) => {
+          const isAddButton: boolean = icon.altText === "Add";
+
+          if (pathname !== "/admin" && isAddButton) {
+            return null;
+          }
+
           return (
             <button
               key={index}

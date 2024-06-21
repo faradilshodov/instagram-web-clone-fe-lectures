@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { usePathname } from "next/navigation";
 
 import ProfileStoriesModal from "./ProfileStoriesModal";
 
@@ -32,6 +33,24 @@ const StoryThumbnail = styled.div<StoryThumbnailPropTypes>`
   cursor: pointer;
 `;
 
+const StoryDeleteButton = styled.button`
+  position: relative;
+  z-index: 5;
+  left: 70px;
+  bottom: 18px;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  border: 1px solid gray;
+
+  &:hover {
+    background-color: rgba(255, 0, 0, 0.7);
+  }
+`;
+
 export interface Story {
   story_id: number;
   user_id: number;
@@ -40,9 +59,15 @@ export interface Story {
   title: string;
 }
 
+interface ProfileStoriesGridPropTypes {
+  triggerRender: boolean;
+}
+
 const apiLinkStories: string =
   "https://jan24-jilhslxp5q-uc.a.run.app/api/stories";
-export default function ProfileStoriesGrid() {
+export default function ProfileStoriesGrid({
+  triggerRender,
+}: ProfileStoriesGridPropTypes) {
   const [stories, setStories] = useState<Story[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>();
   const [currentStoryIndex, setCurrentStoryIndex] = useState<number>();
@@ -65,7 +90,28 @@ export default function ProfileStoriesGrid() {
     };
 
     fetchStories();
-  }, []);
+  }, [triggerRender]);
+
+  const deleteStory = async (storyId: number) => {
+    try {
+      const response: Response = await fetch(
+        `https://jan24-jilhslxp5q-uc.a.run.app/api/stories/${storyId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error deleting Posts");
+      }
+
+      setStories((currentStories) =>
+        currentStories?.filter((story) => story.story_id !== storyId)
+      );
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const openModal = (story: Story) => {
     setIsModalOpen(true);
@@ -81,6 +127,8 @@ export default function ProfileStoriesGrid() {
     setIsModalOpen(false);
   };
 
+  const pathname = usePathname();
+
   return (
     <>
       <StoriesGrid>
@@ -89,7 +137,19 @@ export default function ProfileStoriesGrid() {
             <StoryThumbnail
               imageurl={story.thumbnail_url}
               onClick={() => openModal(story)}
-            />
+            >
+              {pathname === "/admin" && (
+                <StoryDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteStory(story.story_id);
+                  }}
+                >
+                  X
+                </StoryDeleteButton>
+              )}
+            </StoryThumbnail>
+
             <p>{story.title}</p>
           </>
         ))}
